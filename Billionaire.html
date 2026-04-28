@@ -1,134 +1,63 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Billionaire System</title>
-<link rel="manifest" href="manifest.json">
-<style>
-body{margin:0;font-family:Arial;background:#0f2027;color:#fff;text-align:center}
-.container{padding:20px}
-h1{font-size:28px}
-.card{background:#1c2b36;padding:15px;margin:10px;border-radius:15px}
-button{padding:10px 15px;margin:5px;border:none;border-radius:10px;cursor:pointer}
-#quote{font-size:20px;margin-top:10px}
-.progress{height:20px;background:#333;border-radius:10px;margin-top:10px}
-.progress-bar{height:100%;background:#00c9ff;border-radius:10px;width:0%}
-.footer{margin-top:30px;padding:20px;background:#1c2b36;border-radius:15px;font-size:14px;color:#aaa}
-.footer h4{margin:0 0 10px;color:#00c9ff}
-.footer a{color:#00c9ff;text-decoration:none;margin:0 8px}
-.footer a:hover{text-decoration:underline}
-</style>
-</head>
-<body>
-<div class="container">
-<h1>💰 Billionaire System</h1>
-
-<div class="card">
-<h3>🔥 Motivation Engine</h3>
-<div id="quote">Loading...</div>
-<button onclick="nextQuote()">Next</button>
-</div>
-
-<div class="card">
-<h3>📊 Daily Money Tracker</h3>
-<input id="moneyInput" type="number" placeholder="Enter amount made today">
-<button onclick="saveMoney()">Save</button>
-<div id="moneyLog"></div>
-</div>
-
-<div class="card">
-<h3>🎯 R0 → R1M Goal</h3>
-<div class="progress"><div id="bar" class="progress-bar"></div></div>
-<div id="goalText"></div>
-</div>
-
-<div class="card">
-<h3>🔔 Notifications</h3>
-<button onclick="enableNotifications()">Enable Alerts</button>
-</div>
-
-<!-- FOOTER -->
-<div class="footer">
-<h4>👤 Created by Masingita Ngoveni</h4>
-<p>
-<a href="https://facebook.com/pabja.mhusler" target="_blank">📘 Facebook: Pabja M-Husler</a> | 
-<a href="https://tiktok.com/@official.mhusler" target="_blank">🎵 TikTok: Official M-Husler</a>
-</p>
-<p style="font-size:12px;margin-top:10px;">A lightweight, installable PWA for tracking your wealth journey from R0 to R1M — with built-in motivation, daily earnings logging, and focus alerts.</p>
-</div>
-
-</div>
-
 <script>
-// ===== MOTIVATION (AI STYLE GENERATION) =====
-const words1=["Build","Create","Hustle","Focus","Grind","Execute"];
-const words2=["wealth","discipline","power","momentum","freedom"];
-const words3=["daily","relentlessly","without excuses","like a machine","with purpose"];
+// ===== MOTIVATION (ADVANCED AI STYLE GENERATION) =====
 
+// Expanded word banks (BIG upgrade)
+const starters = ["Build","Create","Hustle","Focus","Grind","Execute","Master","Chase","Design","Forge","Elevate","Dominate"];
+const actions = ["wealth","discipline","power","momentum","freedom","success","greatness","legacy","confidence","strength","focus","results"];
+const styles = ["daily","relentlessly","without excuses","like a machine","with purpose","with intensity","non-stop","every single day","with discipline","like a champion"];
+const endings = [
+  "and never look back.",
+  "until you win.",
+  "no matter the cost.",
+  "and dominate your goals.",
+  "because failure is not an option.",
+  "and prove them wrong.",
+  "until success is yours.",
+  "and become unstoppable.",
+  "and rise above average.",
+  "and change your life forever."
+];
+
+// Prevent repeating the same quote
+let lastQuote = "";
+
+// Generate quote with multiple sentence styles
 function generateQuote(){
- return words1[Math.floor(Math.random()*words1.length)] + " " + words2[Math.floor(Math.random()*words2.length)] + " " + words3[Math.floor(Math.random()*words3.length)];
+  let quote = "";
+  const type = Math.floor(Math.random() * 4);
+
+  const s = starters[Math.floor(Math.random()*starters.length)];
+  const a = actions[Math.floor(Math.random()*actions.length)];
+  const st = styles[Math.floor(Math.random()*styles.length)];
+  const e = endings[Math.floor(Math.random()*endings.length)];
+
+  if(type === 0){
+    quote = `${s} ${a} ${st} ${e}`;
+  } 
+  else if(type === 1){
+    quote = `${st.toUpperCase()}, ${s.toLowerCase()} your ${a} ${e}`;
+  } 
+  else if(type === 2){
+    quote = `${s} your ${a} ${st} — ${e}`;
+  }
+  else {
+    quote = `${s} ${st}. Build your ${a} ${e}`;
+  }
+
+  // Avoid immediate repeats
+  if(quote === lastQuote){
+    return generateQuote();
+  }
+
+  lastQuote = quote;
+  return quote;
 }
 
 function nextQuote(){
- document.getElementById("quote").innerText = generateQuote();
+  document.getElementById("quote").innerText = generateQuote();
 }
 
+// Auto refresh every 4 hours
 setInterval(nextQuote,4*60*60*1000);
 nextQuote();
-
-// ===== MONEY TRACKER =====
-let total = localStorage.getItem("money") ? parseFloat(localStorage.getItem("money")) : 0;
-updateUI();
-
-function saveMoney(){
- let val = parseFloat(document.getElementById("moneyInput").value);
- if(!isNaN(val)){
-  total += val;
-  localStorage.setItem("money", total);
-  updateUI();
- }
-}
-
-function updateUI(){
- document.getElementById("moneyLog").innerText = "Total: R"+total;
- let percent = (total/1000000)*100;
- document.getElementById("bar").style.width = percent+"%";
- document.getElementById("goalText").innerText = percent.toFixed(2)+"% to R1M";
-}
-
-// ===== NOTIFICATIONS =====
-function enableNotifications(){
- Notification.requestPermission().then(p=>{
-  if(p==='granted'){
-    setInterval(()=>{
-      new Notification("💰 Stay Focused",{body:generateQuote()});
-    },4*60*60*1000);
-  }
- });
-}
-
-// ===== SERVICE WORKER (PWA) =====
-if('serviceWorker' in navigator){
- navigator.serviceWorker.register('sw.js');
-}
 </script>
-
-<!-- ===== manifest.json =====
-{
- "name":"Billionaire System",
- "short_name":"Billionaire",
- "start_url":"index.html",
- "display":"standalone",
- "background_color":"#0f2027",
- "theme_color":"#0f2027"
-}
--->
-
-<!-- ===== sw.js =====
-self.addEventListener('install',e=>{self.skipWaiting()});
-self.addEventListener('fetch',e=>{});
--->
-
-</body>
-</html>
